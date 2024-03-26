@@ -3,7 +3,7 @@
         "target": "esnext",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "module": "esnext", /* Specify what module code is generated. */
+        "module": "esnext" /* Specify what module code is generated. */,
         "rootDir": "./src",
         "moduleResolution": "nodenext",
         "resolveJsonModule": true,
@@ -15,7 +15,7 @@
         "importHelpers": true,
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
+        "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
         "strict": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
