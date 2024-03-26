@@ -3,7 +3,7 @@
         "target": "esnext",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "module": "esnext" /* Specify what module code is generated. */,
+        "module": "esnext",
         "rootDir": "./src",
         "moduleResolution": "nodenext",
         "resolveJsonModule": true,
@@ -15,7 +15,7 @@
         "importHelpers": true,
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+        "forceConsistentCasingInFileNames": true,
         "strict": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
@@ -26,8 +26,5 @@
         "allowUnreachableCode": true,
         "skipLibCheck": true,
         "noUnusedParameters": false
-        // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
-        // "exactOptionalPropertyTypes": true,               /* Interpret optional property types as written, rather than adding 'undefined'. */
-        // "noUncheckedIndexedAccess": true,                 /* Add 'undefined' to a type when accessed using an index. */
     }
 }
