@@ -1,0 +1,8 @@
+.env
+*.env
+node_modules
+build
+.local
+.cache
+!.gitkeep
+*.logs
