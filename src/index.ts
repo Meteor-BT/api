@@ -2,6 +2,7 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import { createServer } from "http";
+import { registerRouters } from "./routers";
 
 const app = express();
 const server = createServer(app);
@@ -14,6 +15,7 @@ app.use(
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+registerRouters(app);
 
 server.listen(3000, () => {
     console.log("server is listening on port: 3000");

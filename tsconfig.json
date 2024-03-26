@@ -24,9 +24,9 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "allowUnreachableCode": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "noUnusedParameters": false
         // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
-        // "noUnusedParameters": true,                       /* Raise an error when a function parameter isn't read. */
         // "exactOptionalPropertyTypes": true,               /* Interpret optional property types as written, rather than adding 'undefined'. */
         // "noUncheckedIndexedAccess": true,                 /* Add 'undefined' to a type when accessed using an index. */
     }
