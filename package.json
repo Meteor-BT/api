@@ -14,10 +14,12 @@
         "start": "NODE_ENV=production nodemon ./build/index.ts"
     },
     "dependencies": {
+        "cassandra-driver": "^4.7.2",
         "cors": "^2.8.5",
         "express": "^4.19.2",
         "helmet": "^7.1.0",
-        "morgan": "^1.10.0"
+        "morgan": "^1.10.0",
+        "tslib": "^2.6.2"
     },
     "devDependencies": {
         "@types/cors": "^2.8.17",

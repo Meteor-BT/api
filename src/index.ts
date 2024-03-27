@@ -3,6 +3,9 @@ import helmet from "helmet";
 import cors from "cors";
 import { createServer } from "http";
 import { registerRouters } from "./routers";
+import { prepareEnvs } from "./configs";
+
+prepareEnvs();
 
 const app = express();
 const server = createServer(app);

@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "es6",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "module": "esnext",
+        "module": "commonJS",
         "rootDir": "./src",
-        "moduleResolution": "nodenext",
+        "moduleResolution": "node",
         "resolveJsonModule": true,
         "allowJs": false,
         "declaration": true,
