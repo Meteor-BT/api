@@ -1,6 +1,5 @@
 export type WeatherInfo = {
     id: string;
-    date: Date;
     run_id: string;
     city_ascii: string;
     country: string;
@@ -8,5 +7,10 @@ export type WeatherInfo = {
     pressure_msl: number;
     windspeed_10m: number;
     relativehumidity_2m: number;
+    date: Date;
+    hour: number; // 0 - 23
+    day: number; // 1 - 31
+    month: number; // 1 - 12
+    year: number;
     forecast: boolean;
 };
