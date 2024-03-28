@@ -1,19 +1,36 @@
 import { config } from "dotenv";
 
-export function prepareEnvs() {
-    const NODE_ENV = process.env.NODE_ENV;
-    if (NODE_ENV !== "production") {
-        const result = config({ path: ".dev.env" });
-        if (result.error) {
-            console.error(result.error);
-            process.exit(1);
-        }
-    }
-
-    const { PORT } = process.env;
-
-    if (!PORT) {
-        console.error("PORT is required to run the app");
+const NODE_ENV = process.env.NODE_ENV;
+if (NODE_ENV !== "production") {
+    const result = config({ path: ".dev.env" });
+    if (result.error) {
+        console.error(result.error);
         process.exit(1);
     }
 }
+
+const configs = {
+    PORT: process.env.PORT as string,
+    DB_HOST: process.env.DB_HOST as string,
+    DB_DATA_CENTER: process.env.DB_DATA_CENTER as string,
+    DB_KEYSPACE: process.env.DB_KEYSPACE as string,
+};
+
+if (!configs.PORT) {
+    console.error("PORT is required to run the app");
+    process.exit(1);
+}
+if (!configs.DB_HOST) {
+    console.error("DB_HOST is required to run the app");
+    process.exit(1);
+}
+if (!configs.DB_DATA_CENTER) {
+    console.error("DB_DATA_CENTER is required to run the app");
+    process.exit(1);
+}
+if (!configs.DB_KEYSPACE) {
+    console.error("DB_KEYSPACE is required to run the app");
+    process.exit(1);
+}
+
+export default configs;

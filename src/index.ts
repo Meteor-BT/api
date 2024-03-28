@@ -1,11 +1,9 @@
+import config from "./configs/env";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import { createServer } from "http";
 import { registerRouters } from "./routers";
-import { prepareEnvs } from "./configs";
-
-prepareEnvs();
 
 const app = express();
 const server = createServer(app);
@@ -20,6 +18,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 registerRouters(app);
 
-server.listen(3000, () => {
+server.listen(config.PORT, () => {
     console.log("server is listening on port: 3000");
 });
