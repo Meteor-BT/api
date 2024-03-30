@@ -1,6 +1,12 @@
+version: "3.8"
+
 services:
     api:
         image: sifatulrabbi/meteor-bt-api:0.1.0-dev
-        env_file: .env
+        environment:
+            PORT: 80
+            DB_HOST: host.docker.internal
+            DB_DATA_CENTER: datacenter1
+            DB_KEYSPACE: weather_data
         ports:
-            - "8080:80"
+            - "8000:80"
