@@ -1,3 +1,5 @@
+import { Request } from "express";
+
 export type WeatherInfo = {
     id: string;
     run_id: string;
@@ -14,3 +16,15 @@ export type WeatherInfo = {
     year: number;
     forecast: boolean;
 };
+
+export interface WeatherFilterReq extends Request {
+    weatherFilter: {
+        country: string;
+        city: string;
+        year: number;
+        month: number;
+        day: number;
+        forecast: boolean;
+        hour?: number;
+    };
+}

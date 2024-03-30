@@ -11,10 +11,10 @@ export default class WeatherService {
         forecast: boolean,
         country: string,
         city: string,
-        year = new Date().getFullYear(),
-        month = new Date().getMonth(),
-        day = new Date().getDay(),
-        hour = new Date().getHours(),
+        year: number,
+        month: number,
+        day: number,
+        hour?: number,
     ) {
         if (!this.model) throw new Error(); // just for getting around ts error.
 
@@ -24,12 +24,12 @@ export default class WeatherService {
             const w = allData[i];
             if (
                 forecast !== w.forecast ||
-                country !== w.country ||
-                city !== w.city_ascii ||
-                month !== w.month ||
-                day !== w.day ||
-                year !== w.year ||
-                hour !== w.hour
+                country.toLowerCase() !== w.country.toLowerCase() ||
+                city.toLowerCase() !== w.city_ascii.toLowerCase() ||
+                (month && month !== w.month) ||
+                (day && day !== w.day) ||
+                (year && year !== w.year) ||
+                (hour && hour !== w.hour)
             ) {
                 continue;
             }

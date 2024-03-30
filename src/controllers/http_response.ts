@@ -111,7 +111,7 @@ export default class HttpResponse {
             statusCode: this.status,
             success: this.success,
             message: this.message,
-            ...this.data,
+            data: this.data,
         };
         res.status(this.status).json(resBody);
     }
