@@ -26,5 +26,11 @@
         "allowUnreachableCode": true,
         "skipLibCheck": true,
         "noUnusedParameters": false
-    }
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "**/*.test.ts"
+    ]
 }
