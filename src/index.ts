@@ -20,7 +20,6 @@ app.use(express.urlencoded({ extended: true }));
 registerRouters(app);
 
 server.listen(config.PORT, async () => {
-    console.log(`server is listening on port: ${config.PORT}`);
     try {
         // for testing the connection at app startup. Should replace in the future with something like: `SELECT * FROM ping LIMIT 1;`
         await dbClient.execute("SELECT * FROM actual_weather LIMIT 1;");
@@ -28,4 +27,5 @@ server.listen(config.PORT, async () => {
     } catch (err) {
         console.error("Unable to connect to the db", err);
     }
+    console.log(`server is listening on port: ${config.PORT}`);
 });
