@@ -10,3 +10,4 @@ services:
             DB_KEYSPACE: weather_data
         ports:
             - "8000:80"
+        network_mode: "host"
