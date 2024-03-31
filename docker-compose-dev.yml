@@ -2,7 +2,9 @@ version: "3.8"
 
 services:
     api:
-        image: sifatulrabbi/meteor-bt-api:0.1.0-dev
+        build:
+            context: .
+            dockerfile: Dockerfile
         container_name: meteor-bt-api
         environment:
             PORT: 80
