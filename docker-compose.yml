@@ -2,16 +2,17 @@ services:
     api:
         image: sifatulrabbi/meteor-bt-api:0.1.0-dev
         container_name: meteor-bt-api
-        environment:
-            PORT: 80
-            DB_HOST: cassandra
-            DB_DATA_CENTER: datacenter1
-            DB_KEYSPACE: weather_data
+        env_file: .env
+        # environment:
+        #     PORT: 8000
+        #     DB_HOST: cassandra
+        #     DB_DATA_CENTER: datacenter1
+        #     DB_KEYSPACE: weather_data
         ports:
-            - "8000:80"
-        networks:
-            - cassandra
-
-networks:
-    cassandra:
-        external: true
+            - "8000:8000"
+#         networks:
+#             - cassandra
+#
+# networks:
+#     cassandra:
+#         external: true
