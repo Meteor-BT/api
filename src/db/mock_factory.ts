@@ -25,18 +25,12 @@ function createHourlyWeather(
             month: month + 1, // because in js date month starts from 0
             day: day,
             hour: h,
-            temperature_2m: parseFloat(
-                (Math.random() * (40 - -20) + -20).toFixed(1),
-            ),
+            temperature_2m: parseFloat((Math.random() * 30 + 10).toFixed(0)),
             pressure_msl: parseFloat(
-                (Math.random() * (1040 - 980) + 980).toFixed(1),
+                (Math.random() * (1040 - 980) + 980).toFixed(0),
             ),
-            windspeed_10m: parseFloat(
-                (Math.random() * (15 - 0) + 0).toFixed(1),
-            ),
-            relativehumidity_2m: Math.floor(
-                Math.random() * (100 - 10 + 1) + 10,
-            ),
+            windspeed_10m: parseFloat((Math.random() * 15 + 2).toFixed(0)),
+            relativehumidity_2m: Math.floor(Math.random() * 70 + 10),
             forecast: false,
         };
         data.push(w);
