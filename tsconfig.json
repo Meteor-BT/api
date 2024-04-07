@@ -27,10 +27,6 @@
         "skipLibCheck": true,
         "noUnusedParameters": false
     },
-    "include": [
-        "src/**/*"
-    ],
-    "exclude": [
-        "**/*.test.ts"
-    ]
+    "include": ["src/**/*"],
+    "exclude": ["**/*.test.ts"]
 }

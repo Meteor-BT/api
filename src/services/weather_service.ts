@@ -1,40 +1,21 @@
-import type { WeatherInfo } from "../types";
-import { WeatherModel } from "../db";
-import { getMockWeatherInfo } from "../db/mock_factory";
+import type { WeatherFilter } from "../types";
+import { Client } from "cassandra-driver";
 
 export default class WeatherService {
-    constructor(private model: typeof WeatherModel) {}
+    constructor(private readonly db: Client) {}
 
-    // private async getWeatherInfo() {}
-
-    async getWeatherInfo(
-        forecast: boolean,
-        country: string,
-        city: string,
-        year: number,
-        month: number,
-        day: number,
-        hour?: number,
-    ) {
-        if (!this.model) throw new Error(); // just for getting around ts error.
-
-        const allData = getMockWeatherInfo();
-        const filteredData: WeatherInfo[] = [];
-        for (let i = 0; i < allData.length; i++) {
-            const w = allData[i];
-            if (
-                forecast !== w.forecast ||
-                country.toLowerCase() !== w.country.toLowerCase() ||
-                city.toLowerCase() !== w.city_ascii.toLowerCase() ||
-                (month && month !== w.month) ||
-                (day && day !== w.day) ||
-                (year && year !== w.year) ||
-                (hour && hour !== w.hour)
-            ) {
-                continue;
-            }
-            filteredData.push(w);
+    async getWeatherInfo(filter: WeatherFilter) {
+        let q = `SELECT * FROM ${filter.tableName}`;
+        q += `WHERE country = ${filter.country}
+                AND city = ${filter.city}
+                AND date >= ${filter.from}
+                AND date <= ${filter.to}`;
+        if (filter.limit && Number.isInteger(filter.limit)) {
+            q += `\nLIMIT ${filter.limit}`;
         }
-        return filteredData;
+        q += "\nALLOW FILTERING;";
+        const res = await this.db.execute(q);
+        console.log(res.rowLength);
+        return res.rows;
     }
 }

@@ -10,21 +10,24 @@ export type WeatherInfo = {
     windspeed_10m: number;
     relativehumidity_2m: number;
     date: Date;
-    hour: number; // 0 - 23
-    day: number; // 1 - 31
-    month: number; // 1 - 12
+    hour: number;
+    day: number;
+    month: number;
     year: number;
     forecast: boolean;
+    lat: number;
+    lon: number;
+};
+
+export type WeatherFilter = {
+    from: string;
+    to: string;
+    country: string;
+    city: string;
+    tableName: string;
+    limit?: number;
 };
 
 export interface WeatherFilterReq extends Request {
-    weatherFilter: {
-        country: string;
-        city: string;
-        year: number;
-        month: number;
-        day: number;
-        forecast: boolean;
-        hour?: number;
-    };
+    weatherFilter: WeatherFilter;
 }

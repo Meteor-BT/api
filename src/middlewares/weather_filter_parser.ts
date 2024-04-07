@@ -1,58 +1,39 @@
-import type { ControllerFunc, WeatherFilterReq } from "../types";
+import type { ControllerFunc, WeatherFilter, WeatherFilterReq } from "../types";
 import HttpResponse from "../controllers/http_response";
+import dayjs from "dayjs";
+
+const tableNames = {
+    actual: "actual_weather",
+    forecast: "forecast_weather",
+};
+const DATE_FORMAT = "YYYY-MM-DD HH[:00:00.0000]";
 
 export const weatherFilterParser: ControllerFunc = async (req, res, next) => {
-    const country = req.query.country;
-    const city = req.query.city;
-    let year = new Date().getFullYear();
-    let month = new Date().getMonth() + 1;
-    let day = new Date().getDay();
-    let hour = undefined;
+    let country = req.query.country;
+    let city = req.query.city;
+    let from = req.query.from;
+    let to = req.query.to;
+    const weatherFilter: WeatherFilter = {} as WeatherFilter;
 
-    if (
-        !country ||
-        !city ||
-        typeof country !== "string" ||
-        typeof city !== "string"
-    ) {
-        HttpResponse.badRequest(
-            "Payload is invalid, please specify the country and city",
-        ).send(res);
+    if (typeof city !== "string" || typeof country !== "string") {
+        HttpResponse.unprocessableEntity("Either provice `city` & `country` or `lat` & `lon`").send(res);
         return;
     }
 
-    if (req.query.year && typeof req.query.year === "string") {
-        const n = parseInt(req.query.year);
-        if (Number.isInteger(n) && !Number.isNaN(n)) {
-            year = n;
-        }
+    if (typeof from !== "string") {
+        weatherFilter.from = dayjs(Date.now()).format(DATE_FORMAT);
+        weatherFilter.to = dayjs(Date.now()).format(DATE_FORMAT);
+    } else {
+        weatherFilter.from = dayjs(from).format(DATE_FORMAT);
+        weatherFilter.to = dayjs(typeof to === "string" ? to : from).format(DATE_FORMAT);
     }
-    if (req.query.month && typeof req.query.month === "string") {
-        const n = parseInt(req.query.month);
-        if (Number.isInteger(n) && !Number.isNaN(n)) {
-            month = n;
-        }
+
+    if (req.url.includes("forecasts")) {
+        weatherFilter.tableName = tableNames.forecast;
+    } else {
+        weatherFilter.tableName = tableNames.actual;
     }
-    if (req.query.day && typeof req.query.day === "string") {
-        const n = parseInt(req.query.day);
-        if (Number.isInteger(n) && !Number.isNaN(n)) {
-            day = n;
-        }
-    }
-    if (req.query.hour && typeof req.query.hour === "string") {
-        const n = parseInt(req.query.hour);
-        if (Number.isInteger(n) && !Number.isNaN(n)) {
-            hour = n;
-        }
-    }
-    (req as WeatherFilterReq).weatherFilter = {
-        country,
-        city,
-        year,
-        month,
-        day,
-        hour,
-        forecast: req.url.endsWith("forecasts"),
-    };
+
+    (req as WeatherFilterReq).weatherFilter = weatherFilter;
     next();
 };

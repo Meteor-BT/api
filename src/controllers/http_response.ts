@@ -8,13 +8,7 @@ export default class HttpResponse {
     data: any = {};
     code?: string;
 
-    constructor(
-        status: number,
-        success: boolean,
-        message: string,
-        data: any,
-        code?: string,
-    ) {
+    constructor(status: number, success: boolean, message: string, data: any, code?: string) {
         this.status = status;
         this.success = success;
         this.message = parseError(message);
@@ -49,11 +43,7 @@ export default class HttpResponse {
     /**
      * Creates a bad request response.
      */
-    static badRequest(
-        message = "Bad request",
-        data = {},
-        code = "BAD_REQUEST_ERROR",
-    ) {
+    static badRequest(message = "Bad request", data = {}, code = "BAD_REQUEST_ERROR") {
         const custom = new HttpResponse(400, false, message, data, code);
         return custom;
     }
@@ -61,11 +51,7 @@ export default class HttpResponse {
     /**
      * Creates a forbidden response.
      */
-    static forbidden(
-        message = "Forbidden",
-        data = {},
-        code = "FORBIDDEN_ERROR",
-    ) {
+    static forbidden(message = "Forbidden", data = {}, code = "FORBIDDEN_ERROR") {
         const custom = new HttpResponse(403, false, message, data, code);
         return custom;
     }
@@ -99,6 +85,14 @@ export default class HttpResponse {
      */
     static paymentRequired(message = "Payment Required", data = {}) {
         const custom = new HttpResponse(402, false, message, data);
+        return custom;
+    }
+
+    /**
+     * create and send payment required http error response
+     */
+    static unprocessableEntity(message = "Unprocessable entity", data = {}) {
+        const custom = new HttpResponse(422, false, message, data);
         return custom;
     }
 

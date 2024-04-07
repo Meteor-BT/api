@@ -6,13 +6,7 @@ const countries: { [key: string]: string[] } = {
     Canada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
 };
 
-function createHourlyWeather(
-    country: string,
-    city: string,
-    year: number,
-    month: number,
-    day: number,
-) {
+function createHourlyWeather(country: string, city: string, year: number, month: number, day: number) {
     const data: WeatherInfo[] = [];
     for (let h = 0; h < 24; h++) {
         const w: WeatherInfo = {
@@ -26,9 +20,7 @@ function createHourlyWeather(
             day: day,
             hour: h,
             temperature_2m: parseFloat((Math.random() * 30 + 10).toFixed(0)),
-            pressure_msl: parseFloat(
-                (Math.random() * (1040 - 980) + 980).toFixed(0),
-            ),
+            pressure_msl: parseFloat((Math.random() * (1040 - 980) + 980).toFixed(0)),
             windspeed_10m: parseFloat((Math.random() * 15 + 2).toFixed(0)),
             relativehumidity_2m: Math.floor(Math.random() * 70 + 10),
             forecast: false,
@@ -60,9 +52,7 @@ export function getMockWeatherInfo() {
                         days = 30;
                     }
                     for (let i = 1; i <= days; i++) {
-                        data.push(
-                            ...createHourlyWeather(country, city, y, m, i),
-                        );
+                        data.push(...createHourlyWeather(country, city, y, m, i));
                     }
                 }
             }
