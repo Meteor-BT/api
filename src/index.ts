@@ -5,6 +5,7 @@ import cors from "cors";
 import { createServer } from "http";
 import { registerRouters } from "./routers";
 import { dbClient } from "./db";
+import morgan from "morgan";
 
 const app = express();
 const server = createServer(app);
@@ -17,6 +18,7 @@ app.use(
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan("dev"));
 registerRouters(app);
 
 server.listen(configs.PORT, async () => {

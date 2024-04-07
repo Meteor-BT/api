@@ -20,6 +20,9 @@ export const weatherFilterParser: ControllerFunc = async (req, res, next) => {
         return;
     }
 
+    weatherFilter.country = country;
+    weatherFilter.city = city;
+
     if (typeof from !== "string") {
         weatherFilter.from = dayjs(Date.now()).format(configs.DATE_FORMAT);
         weatherFilter.to = dayjs(Date.now()).format(configs.DATE_FORMAT);
@@ -35,5 +38,6 @@ export const weatherFilterParser: ControllerFunc = async (req, res, next) => {
     }
 
     (req as WeatherFilterReq).weatherFilter = weatherFilter;
+    console.log("handling req:", weatherFilter);
     next();
 };
