@@ -10,9 +10,9 @@ services:
         #     DB_KEYSPACE: weather_data
         ports:
             - "8000:8000"
-#         networks:
-#             - cassandra
-#
-# networks:
-#     cassandra:
-#         external: true
+        networks:
+            - cassandra
+
+networks:
+    cassandra:
+        external: true
