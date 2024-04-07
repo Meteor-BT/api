@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 
-const NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = process.env.NODE_ENV || "development";
 if (NODE_ENV !== "production") {
     const result = config({ path: ".dev.env" });
     if (result.error) {
@@ -8,8 +8,13 @@ if (NODE_ENV !== "production") {
         process.exit(1);
     }
 }
+const DATE_FORMAT = "YYYY-MM-DD";
+const DATETIME_FORMAT = "YYYY-MM-DD HH[:00:00.0000]";
 
-const configs = {
+export const configs = {
+    NODE_ENV,
+    DATE_FORMAT,
+    DATETIME_FORMAT,
     PORT: process.env.PORT as string,
     DB_HOST: process.env.DB_HOST as string,
     DB_DATA_CENTER: process.env.DB_DATA_CENTER as string,
@@ -32,5 +37,3 @@ if (!configs.DB_KEYSPACE) {
     console.error("DB_KEYSPACE is required to run the app");
     process.exit(1);
 }
-
-export default configs;

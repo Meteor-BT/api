@@ -1,21 +1,58 @@
 import type { WeatherFilter } from "../types";
 import { Client } from "cassandra-driver";
+import dayjs from "dayjs";
+import { configs } from "../configs";
+import cassandra from "cassandra-driver";
 
 export default class WeatherService {
     constructor(private readonly db: Client) {}
 
-    async getWeatherInfo(filter: WeatherFilter) {
-        let q = `SELECT * FROM ${filter.tableName}`;
-        q += `WHERE country = ${filter.country}
-                AND city = ${filter.city}
-                AND date >= ${filter.from}
-                AND date <= ${filter.to}`;
-        if (filter.limit && Number.isInteger(filter.limit)) {
-            q += `\nLIMIT ${filter.limit}`;
+    constructGetQuery(filter: WeatherFilter) {
+        const queries: string[] = [];
+
+        function createQuery(f: WeatherFilter) {
+            let q = `SELECT * FROM ${f.tableName}`;
+            q += `\nWHERE date = '${dayjs(f.from).format(configs.DATE_FORMAT)}'`;
+            q += `\nAND city_ascii = '${f.city}'`;
+            if (f.country) {
+                q += `\nAND country = '${f.country}'`;
+            }
+            if (f.limit) {
+                q += `\nLIMIT '${f.limit}'`;
+            }
+            q += "\nALLOW FILTERING;"; // WARN: we should optimize our db by adding `city_ascii` & `country` as primary/secondary indexes.
+            return q;
         }
-        q += "\nALLOW FILTERING;";
-        const res = await this.db.execute(q);
-        console.log(res.rowLength);
-        return res.rows;
+
+        if (dayjs(filter.from).isSame(filter.to, "date")) {
+            queries.push(createQuery(filter));
+        } else {
+            let now = dayjs(filter.from);
+            do {
+                const from = now.format(configs.DATE_FORMAT);
+                now = now.add(1, "day");
+                queries.push(createQuery({ ...filter, from }));
+            } while (!now.isAfter(filter.to, "day"));
+        }
+
+        return queries;
+    }
+
+    async getWeatherInfo(filter: WeatherFilter) {
+        const queries = this.constructGetQuery(filter);
+        const promises: Promise<cassandra.types.ResultSet>[] = [];
+        queries.forEach((q) => {
+            promises.push(this.db.execute(q));
+        });
+        const results = await Promise.allSettled(promises);
+        const rows: cassandra.types.Row[] = [];
+        results.forEach((r) => {
+            if (r.status === "fulfilled") {
+                rows.push(...r.value.rows);
+            } else {
+                console.log(r.reason);
+            }
+        });
+        return rows;
     }
 }
