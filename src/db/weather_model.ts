@@ -6,6 +6,7 @@ export const WeatherModel = new cassandra.mapping.Mapper(dbClient, {
     models: {
         Forecast: {
             tables: ["forecasts"],
+            keyspace: "weather_data",
             mappings: new cassandra.mapping.DefaultTableMappings(),
             columns: {
                 id: "id",

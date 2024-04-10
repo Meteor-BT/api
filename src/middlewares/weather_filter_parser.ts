@@ -19,11 +19,10 @@ export const weatherFilterParser: ControllerFunc = async (req, res, next) => {
         HttpResponse.unprocessableEntity("Either provice `city` & `country` or `lat` & `lon`").send(res);
         return;
     }
-
     weatherFilter.country = country;
     weatherFilter.city = city;
 
-    if (typeof from !== "string") {
+    if (typeof from !== "string" || !from) {
         weatherFilter.from = dayjs(Date.now()).format(configs.DATE_FORMAT);
         weatherFilter.to = dayjs(Date.now()).format(configs.DATE_FORMAT);
     } else {

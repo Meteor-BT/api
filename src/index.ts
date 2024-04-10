@@ -4,7 +4,7 @@ import helmet from "helmet";
 import cors from "cors";
 import { createServer } from "http";
 import { registerRouters } from "./routers";
-import { dbClient } from "./db";
+import { dbClient, syncDbConfigs } from "./db";
 import morgan from "morgan";
 
 const app = express();
@@ -23,8 +23,7 @@ registerRouters(app);
 
 server.listen(configs.PORT, async () => {
     try {
-        // for testing the connection at app startup. Should replace in the future with something like: `SELECT * FROM ping LIMIT 1;`
-        await dbClient.execute("SELECT * FROM actual_weather LIMIT 1;");
+        await syncDbConfigs();
         console.log("Connected to db", dbClient.getState().toString());
     } catch (err) {
         console.error("Unable to connect to the db", err);

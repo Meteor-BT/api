@@ -90,6 +90,7 @@ export default class HttpResponse {
 
     /**
      * create and send payment required http error response
+     * @statusCode 422
      */
     static unprocessableEntity(message = "Unprocessable entity", data = {}) {
         const custom = new HttpResponse(422, false, message, data);

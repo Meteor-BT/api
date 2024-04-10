@@ -5,13 +5,16 @@ import { configs } from "../configs";
 import cassandra from "cassandra-driver";
 
 export default class WeatherService {
+    public readonly keySpace = "weather_data";
+
     constructor(private readonly db: Client) {}
 
     constructGetQuery(filter: WeatherFilter) {
         const queries: string[] = [];
+        const ks = this.keySpace;
 
         function createQuery(f: WeatherFilter) {
-            let q = `SELECT * FROM ${f.tableName}`;
+            let q = `SELECT * FROM ${ks}.${f.tableName}`;
             q += `\nWHERE date = '${dayjs(f.from).format(configs.DATE_FORMAT)}'`;
             q += `\nAND city_ascii = '${f.city}'`;
             if (f.country) {
@@ -37,6 +40,8 @@ export default class WeatherService {
 
         return queries;
     }
+
+    async getMergedResults() {}
 
     async getWeatherInfo(filter: WeatherFilter) {
         const queries = this.constructGetQuery(filter);
