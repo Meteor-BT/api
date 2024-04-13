@@ -48,7 +48,7 @@ export default class WeatherService {
             if (r.status === "fulfilled") {
                 rows.push(...r.value.rows);
             } else {
-                console.log(r.reason);
+                console.error(r.reason);
             }
         });
         const data: WeatherInfo[] = [];

@@ -45,6 +45,5 @@ export const weatherFilterParser: ControllerFunc = async (req, res, next) => {
     // }
 
     (req as WeatherFilterReq).weatherFilter = weatherFilter;
-    console.log("handling req:", weatherFilter);
     next();
 };
