@@ -14,16 +14,6 @@ const getWeatherReport: ControllerFunc = async (req, res) => {
     }
 };
 
-const getMergedWeatherReport: ControllerFunc = async (req, res) => {
-    try {
-        HttpResponse.ok("Weather report", {}).send(res);
-    } catch (err: any) {
-        console.error(err.response ? err.response : err);
-        HttpResponse.internal(err).send(res);
-    }
-};
-
 export const weatherController = {
     getWeatherReport,
-    getMergedWeatherReport,
 };

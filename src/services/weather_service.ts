@@ -1,29 +1,24 @@
-import type { WeatherFilter } from "../types";
+import type { WeatherFilter, WeatherInfo } from "../types";
 import { Client } from "cassandra-driver";
 import dayjs from "dayjs";
 import { configs } from "../configs";
 import cassandra from "cassandra-driver";
+import { keySpaces, tableNames } from "../db/configs";
 
 export default class WeatherService {
-    public readonly keySpace = "weather_data";
-
     constructor(private readonly db: Client) {}
 
     constructGetQuery(filter: WeatherFilter) {
         const queries: string[] = [];
-        const ks = this.keySpace;
-
         function createQuery(f: WeatherFilter) {
-            let q = `SELECT * FROM ${ks}.${f.tableName}`;
+            let q = `SELECT * FROM ${keySpaces.WEATHER}.${tableNames.WEATHER.COMBINED}`;
             q += `\nWHERE date = '${dayjs(f.from).format(configs.DATE_FORMAT)}'`;
             q += `\nAND city_ascii = '${f.city}'`;
-            if (f.country) {
-                q += `\nAND country = '${f.country}'`;
-            }
+            q += `\nAND country = '${f.country}'`;
             if (f.limit) {
                 q += `\nLIMIT '${f.limit}'`;
             }
-            q += "\nALLOW FILTERING;"; // WARN: we should optimize our db by adding `city_ascii` & `country` as primary/secondary indexes.
+            q += "\nALLOW FILTERING;";
             return q;
         }
 
@@ -41,8 +36,6 @@ export default class WeatherService {
         return queries;
     }
 
-    async getMergedResults() {}
-
     async getWeatherInfo(filter: WeatherFilter) {
         const queries = this.constructGetQuery(filter);
         const promises: Promise<cassandra.types.ResultSet>[] = [];
@@ -58,6 +51,22 @@ export default class WeatherService {
                 console.log(r.reason);
             }
         });
-        return rows;
+        const data: WeatherInfo[] = [];
+        for (let i = 0; i < rows.length; i++) {
+            const r = rows[i];
+            data.push({
+                city_ascii: r.get("city_ascii"),
+                country: r.get("country"),
+                temperature_2m: r.get("temperature_2m"),
+                pressure_msl: r.get("pressure_msl"),
+                windspeed_10m: r.get("windspeed_10m"),
+                relativehumidity_2m: r.get("relativehumidity_2m"),
+                date: new Date(r.get("date")),
+                lat: r.get("lat"),
+                lon: r.get("lon"),
+                forecast: r.get("data_type") !== "actual",
+            });
+        }
+        return data;
     }
 }

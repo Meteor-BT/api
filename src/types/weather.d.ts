@@ -1,8 +1,6 @@
 import { Request } from "express";
 
 export type WeatherInfo = {
-    id: string;
-    run_id: string;
     city_ascii: string;
     country: string;
     temperature_2m: number;
@@ -10,13 +8,9 @@ export type WeatherInfo = {
     windspeed_10m: number;
     relativehumidity_2m: number;
     date: Date;
-    hour: number;
-    day: number;
-    month: number;
-    year: number;
-    forecast: boolean;
     lat: number;
     lon: number;
+    forecast: boolean;
 };
 
 export type WeatherFilter = {

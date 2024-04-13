@@ -1,14 +1,13 @@
 import { Client } from "cassandra-driver";
 import dayjs from "dayjs";
 import { configs } from "../configs";
+import { tableNames, keySpaces } from "../db/configs";
 
 export default class UsersService {
-    public readonly keySpace = "user_data";
-
     constructor(private readonly db: Client) {}
 
     async addUserToWaitingList(email: string) {
-        const q = `INSERT INTO ${this.keySpace}.waitlist (email, date)
+        const q = `INSERT INTO ${keySpaces.USER}.${tableNames.USER.WAITLIST} (email, date)
                     VALUES ('${email}', '${dayjs(new Date().toUTCString()).format(configs.DATE_FORMAT)}');`;
         const res = await this.db.execute(q);
         if (res.info.warnings?.length > 0) {

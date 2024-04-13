@@ -1,4 +1,4 @@
-import { describe, test, beforeAll, expect } from "@jest/globals";
+import { describe, test, expect } from "@jest/globals";
 import { dbClient } from "../src/db/connection";
 import type { WeatherFilter } from "../src/types";
 import dayjs from "dayjs";
@@ -6,14 +6,11 @@ import { configs } from "../src/configs/env";
 import WeatherService from "../src/services/weather_service";
 
 const testData = {
-    country: "United States",
-    city: "New York",
+    country: "Japan",
+    city: "Osaka",
     tableName: "forecast_weather",
 };
 
-beforeAll(async () => {
-    await dbClient.execute("SELECT * FROM actual_weather LIMIT 1;");
-}, 10_000);
 afterAll(async () => {
     await dbClient.shutdown();
 });
@@ -44,7 +41,7 @@ describe("Getting filtered weather info", () => {
         const s = new WeatherService(dbClient);
         const rows = await s.getWeatherInfo(filter);
         expect(rows.length).toBeGreaterThan(0);
-        expect(rows[0].get("city_ascii")).toBe("New York");
+        expect(rows[0].city_ascii).toBe("Osaka");
     });
 
     test("for selected week (7 days)", async () => {
@@ -56,7 +53,7 @@ describe("Getting filtered weather info", () => {
         const s = new WeatherService(dbClient);
         const rows = await s.getWeatherInfo(filter);
         expect(rows.length).toBeGreaterThan(6);
-        expect(rows[0].get("city_ascii")).toBe("New York");
+        expect(rows[0].city_ascii).toBe("Osaka");
     });
 
     test("for selected year (12 months)", async () => {});
