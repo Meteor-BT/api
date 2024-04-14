@@ -10,26 +10,33 @@ export default class WeatherService {
 
     constructGetQuery(filter: WeatherFilter) {
         const queries: string[] = [];
-        function createQuery(f: WeatherFilter) {
-            let q = `SELECT * FROM ${keySpaces.WEATHER}.${tableNames.WEATHER.COMBINED}`;
-            q += `\nWHERE date = '${dayjs(f.from).format(configs.DATE_FORMAT)}'`;
-            q += `\nAND city_ascii = '${f.city}'`;
-            q += `\nAND country = '${f.country}'`;
-            if (f.limit) {
-                q += `\nLIMIT '${f.limit}'`;
-            }
-            q += "\nALLOW FILTERING;";
-            return q;
+
+        function createQuery(qlist: string[], f: WeatherFilter) {
+            const qhelper = (startLine: string) => {
+                let q = startLine;
+                q += `\nWHERE date = '${dayjs(f.from).format(configs.DATE_FORMAT)}'`;
+                q += `\nAND city_ascii = '${f.city}'`;
+                q += `\nAND country = '${f.country}'`;
+                if (f.limit) {
+                    q += `\nLIMIT '${f.limit}'`;
+                }
+                q += "\nALLOW FILTERING;";
+                return q;
+            };
+
+            qlist.push(qhelper(`SELECT * FROM ${keySpaces.WEATHER}.${tableNames.WEATHER.COMBINED}`));
+            qlist.push(qhelper(`SELECT * FROM ${keySpaces.WEATHER}.${tableNames.WEATHER.ACTUAL}`));
+            qlist.push(qhelper(`SELECT * FROM ${keySpaces.WEATHER}.${tableNames.WEATHER.FORECAST}`));
         }
 
         if (dayjs(filter.from).isSame(filter.to, "date")) {
-            queries.push(createQuery(filter));
+            createQuery(queries, filter);
         } else {
             let now = dayjs(filter.from);
             do {
                 const from = now.format(configs.DATE_FORMAT);
                 now = now.add(1, "day");
-                queries.push(createQuery({ ...filter, from }));
+                createQuery(queries, { ...filter, from });
             } while (!now.isAfter(filter.to, "day"));
         }
 
