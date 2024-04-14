@@ -12,21 +12,15 @@ export default class WeatherService {
         const queries: string[] = [];
 
         function createQuery(qlist: string[], f: WeatherFilter) {
-            const qhelper = (startLine: string) => {
-                let q = startLine;
-                q += `\nWHERE date = '${dayjs(f.from).format(configs.DATE_FORMAT)}'`;
-                q += `\nAND city_ascii = '${f.city}'`;
-                q += `\nAND country = '${f.country}'`;
-                if (f.limit) {
-                    q += `\nLIMIT '${f.limit}'`;
-                }
-                q += "\nALLOW FILTERING;";
-                return q;
-            };
-
-            qlist.push(qhelper(`SELECT * FROM ${keySpaces.WEATHER}.${tableNames.WEATHER.COMBINED}`));
-            qlist.push(qhelper(`SELECT * FROM ${keySpaces.WEATHER}.${tableNames.WEATHER.ACTUAL}`));
-            qlist.push(qhelper(`SELECT * FROM ${keySpaces.WEATHER}.${tableNames.WEATHER.FORECAST}`));
+            let q = `SELECT * FROM ${keySpaces.WEATHER}.${f.tableName}`;
+            q += `\nWHERE date = '${dayjs(f.from).format(configs.DATE_FORMAT)}'`;
+            q += `\nAND city_ascii = '${f.city}'`;
+            q += `\nAND country = '${f.country}'`;
+            if (f.limit) {
+                q += `\nLIMIT '${f.limit}'`;
+            }
+            q += "\nALLOW FILTERING;";
+            qlist.push(q);
         }
 
         if (dayjs(filter.from).isSame(filter.to, "date")) {
@@ -43,8 +37,8 @@ export default class WeatherService {
         return queries;
     }
 
-    async getWeatherInfo(filter: WeatherFilter) {
-        const queries = this.constructGetQuery(filter);
+    async getCombinedInfo(filter: WeatherFilter) {
+        const queries = this.constructGetQuery({ ...filter, tableName: tableNames.WEATHER.COMBINED });
         const promises: Promise<cassandra.types.ResultSet>[] = [];
         queries.forEach((q) => {
             promises.push(this.db.execute(q));
@@ -73,6 +67,87 @@ export default class WeatherService {
                 lon: r.get("lon"),
                 forecast: r.get("data_type") !== "actual",
             });
+        }
+        return data;
+    }
+
+    async getForecastInfo(filter: WeatherFilter) {
+        const queries = this.constructGetQuery({ ...filter, tableName: tableNames.WEATHER.FORECAST });
+        const promises: Promise<cassandra.types.ResultSet>[] = [];
+        queries.forEach((q) => {
+            promises.push(this.db.execute(q));
+        });
+        const results = await Promise.allSettled(promises);
+        const rows: cassandra.types.Row[] = [];
+        results.forEach((r) => {
+            if (r.status === "fulfilled") {
+                rows.push(...r.value.rows);
+            } else {
+                console.error(r.reason);
+            }
+        });
+        const data: WeatherInfo[] = [];
+        for (let i = 0; i < rows.length; i++) {
+            const r = rows[i];
+            data.push({
+                city_ascii: r.get("city_ascii"),
+                country: r.get("country"),
+                temperature_2m: r.get("temperature_2m"),
+                pressure_msl: r.get("pressure_msl"),
+                windspeed_10m: r.get("windspeed_10m"),
+                relativehumidity_2m: r.get("relativehumidity_2m"),
+                date: new Date(r.get("date")),
+                lat: r.get("lat"),
+                lon: r.get("lon"),
+                forecast: true,
+            });
+        }
+        return data;
+    }
+
+    async getActualInfo(filter: WeatherFilter) {
+        const queries = this.constructGetQuery({ ...filter, tableName: tableNames.WEATHER.ACTUAL });
+        const promises: Promise<cassandra.types.ResultSet>[] = [];
+        queries.forEach((q) => {
+            promises.push(this.db.execute(q));
+        });
+        const results = await Promise.allSettled(promises);
+        const rows: cassandra.types.Row[] = [];
+        results.forEach((r) => {
+            if (r.status === "fulfilled") {
+                rows.push(...r.value.rows);
+            } else {
+                console.error(r.reason);
+            }
+        });
+        const data: WeatherInfo[] = [];
+        for (let i = 0; i < rows.length; i++) {
+            const r = rows[i];
+            data.push({
+                city_ascii: r.get("city_ascii"),
+                country: r.get("country"),
+                temperature_2m: r.get("temperature_2m"),
+                pressure_msl: r.get("pressure_msl"),
+                windspeed_10m: r.get("windspeed_10m"),
+                relativehumidity_2m: r.get("relativehumidity_2m"),
+                date: new Date(r.get("date")),
+                lat: r.get("lat"),
+                lon: r.get("lon"),
+                forecast: false,
+            });
+        }
+        return data;
+    }
+
+    async getWeatherInfo(filter: WeatherFilter) {
+        const results = await Promise.allSettled([this.getCombinedInfo(filter), this.getForecastInfo(filter), this.getActualInfo(filter)]);
+        const data: WeatherInfo[] = [];
+        for (const r of results) {
+            if (r.status === "fulfilled") {
+                data.push(...r.value);
+            } else {
+                console.error(r.reason);
+            }
         }
         return data;
     }
