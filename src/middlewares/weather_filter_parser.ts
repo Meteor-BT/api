@@ -24,11 +24,6 @@ export const weatherFilterParser: ControllerFunc = async (req, res, next) => {
         weatherFilter.from = dayjs(from).format(configs.DATE_FORMAT);
         weatherFilter.to = dayjs(to && typeof to === "string" ? to : from).format(configs.DATE_FORMAT);
     }
-    {
-        // temporarily using this date range, will be removed in a future update.
-        weatherFilter.from = dayjs("2024-03-01").format(configs.DATE_FORMAT);
-        weatherFilter.to = dayjs(Date.now()).format(configs.DATE_FORMAT);
-    }
 
     (req as WeatherFilterReq).weatherFilter = weatherFilter;
     next();

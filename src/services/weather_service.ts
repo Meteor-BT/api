@@ -23,7 +23,7 @@ export default class WeatherService {
             qlist.push(q);
         }
 
-        if (dayjs(filter.from).isSame(filter.to, "date")) {
+        if (dayjs(filter.from).isSame(filter.to, "day")) {
             createQuery(queries, filter);
         } else {
             let now = dayjs(filter.from);
@@ -149,6 +149,18 @@ export default class WeatherService {
                 console.error(r.reason);
             }
         }
+
+        if (data.length === 1 && dayjs(filter.from).isSame(filter.to, "day")) {
+            const ref = data[0];
+            data.splice(0, data.length);
+            const from = dayjs(filter.from).startOf("day");
+            let n = from.startOf("day");
+            do {
+                data.push({ ...ref, date: n.toDate() });
+                n = n.add(1, "hour");
+            } while (from.isSame(n, "day"));
+        }
+
         return data;
     }
 }
