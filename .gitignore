@@ -7,3 +7,4 @@ build
 !.gitkeep
 *.logs
 .DS_Store
+._*
